@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student List</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .delete-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Student List</h1>
+    <table id="studentTable" class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>CC Marks</th>
+          <th>DSBDA Marks</th>
+          <th>CNS Marks</th>
+          <th>WAD Marks</th>
+          <th>AI Marks</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button><a href="register.html">Add Student</a></button>
+    <button id="fetchstudents">Fetch all students</button>
+    <button id="fetchDsbdAbove20">Fetch students with DSBDA > 20 marks</button>
+
+    <form id="searchStudentForm">
+      <label for="studentName">Student Name:</label>
+      <input type="text" id="studentName" name="studentName" required />
+      <button type="submit">Search Student</button>
+    </form>
+
+    <form id="deleteStudentForm">
+      <label for="deleteStudentName">Student Name:</label>
+      <input type="text" id="deleteStudentName" name="studentName" required />
+      <button type="submit">Delete Student</button>
+    </form>
+    <form id="updateStudentForm">
+      <label for="updateStudentName">Student Name:</label>
+      <input type="text" id="updateStudentName" name="studentName" required />
+      <button type="submit">Update Marks by 20</button>
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const fetchButton = document.getElementById("fetchstudents");
+        const fetchDsbdAbove20Button =
+          document.getElementById("fetchDsbdAbove20");
+        const studentTable = document.getElementById("studentTable");
+        const searchStudentForm = document.getElementById("searchStudentForm");
+        const deleteStudentForm = document.getElementById("deleteStudentForm");
+
+        fetchButton.addEventListener("click", () => {
+          fetchStudents("http://127.0.0.1:3000/user/getallstudents");
+        });
+
+        fetchDsbdAbove20Button.addEventListener("click", () => {
+          fetchStudents("http://127.0.0.1:3000/user/getstudentdsbds20");
+        });
+
+        searchStudentForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const studentName = document.getElementById("studentName").value;
+          fetchStudents(`http://127.0.0.1:3000/user/getstudent/${studentName}`);
+        });
+
+        deleteStudentForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const studentName =
+            document.getElementById("deleteStudentName").value;
+          deleteStudent(studentName);
+        });
+
+        function fetchStudents(url) {
+          fetch(url)
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              const tbody = studentTable.querySelector("tbody");
+              tbody.innerHTML = "";
+              const dataArray = Array.isArray(data) ? data : [data];
+              dataArray.forEach((student) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+            <td>${student.Name}</td>
+            <td>${student.CC_MARKS}</td>
+            <td>${student.DSBDA_MARKS}</td>
+            <td>${student.CNS_MARKS}</td>
+            <td>${student.WAD_MARKS}</td>
+            <td>${student.AI_MARKS}</td>
+            <td><button class="delete-btn" data-student="${student.Name}">Delete</button></td>
+          `;
+                tbody.appendChild(row);
+              });
+            })
+            .catch((error) => {
+              console.error("Error fetching student data:", error);
+              alert("Error fetching student data. Please try again.");
+            });
+        }
+
+        function deleteStudent(studentName) {
+          fetch(`http://127.0.0.1:3000/user/deletestudent/${studentName}`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              if (response.ok) {
+                alert("Student deleted successfully");
+                location.reload();
+              } else {
+                throw new Error("Network response was not ok");
+              }
+            })
+            .catch((error) => {
+              console.error("Error deleting student:", error);
+              alert("Error deleting student. Please try again.");
+            });
+        }
+
+        studentTable.addEventListener("click", (event) => {
+          if (event.target.classList.contains("delete-btn")) {
+            const studentName = event.target.dataset.student;
+            deleteStudent(studentName);
+          }
+        });
+        const updateStudentForm = document.getElementById("updateStudentForm");
+
+        updateStudentForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const studentName =
+            document.getElementById("updateStudentName").value;
+          updateStudentMarks(studentName);
+        });
+
+        function updateStudentMarks(studentName) {
+          fetch(`http://127.0.0.1:3000/user/updateby20/${studentName}`, {
+            method: "PUT",
+          })
+            .then((response) => {
+              if (response.ok) {
+                alert("Student's marks updated successfully");
+                location.reload();
+              } else {
+                throw new Error("Network response was not ok");
+              }
+            })
+            .catch((error) => {
+              console.error("Error updating student marks:", error);
+              alert("Error updating student marks. Please try again.");
+            });
+        }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
+
+
+//////////////////////////////////////////////////////////////////////////////
+register.html in frontend
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+</head>
+<body>
+    <h2>Add Student</h2>
+    <form  id="studentForm">
+        <label for="Name">Name:</label>
+        <input type="text" id="Name" name="Name" required><br><br>
+        
+        <label for="CC_MARKS">CC Marks:</label>
+        <input type="number" id="CC_MARKS" name="CC_MARKS" required><br><br>
+        
+        <label for="DSBDA_MARKS">DSBDA Marks:</label>
+        <input type="number" id="DSBDA_MARKS" name="DSBDA_MARKS" required><br><br>
+        
+        <label for="CNS_MARKS">CNS Marks:</label>
+        <input type="number" id="CNS_MARKS" name="CNS_MARKS" required><br><br>
+        
+        <label for="WAD_MARKS">WAD Marks:</label>
+        <input type="number" id="WAD_MARKS" name="WAD_MARKS" required><br><br>
+        
+        <label for="AI_MARKS">AI Marks:</label>
+        <input type="number" id="AI_MARKS" name="AI_MARKS" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+    <script>
+        document.getElementById("studentForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(this); // Get form data
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+            fetch("http://localhost:3000/user/addstudent", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // Log response from server
+                // Handle response as needed (e.g., show success message)
+                alert("sucessfull");
+                window.location.href="http://127.0.0.1:5500/Frontend/index.html"
+            })
+            .catch(error => {
+                console.error("Error:", error); // Log any errors
+                // Handle errors as needed (e.g., show error message)
+            });
+        });
+    </script>
+    
+</body>
+</html>
+////////////////////////////////////////////////////////////////////////////////////
+in backend in models ->user,
+
+const mongoose = require("mongoose");
+const userSchema = new mongoose.Schema({
+  Name: {
+    type: String,
+    required: true,
+        unique: true 
+   
+  },
+  CC_MARKS: {
+    type: Number,
+    required: true,
+  },
+  DSBDA_MARKS: {
+    type: Number,
+    required: true,
+  },
+  CNS_MARKS: {
+    type: Number,
+    required: true,
+  },
+  WAD_MARKS: {
+    type: Number,
+    required: true,
+  },
+  AI_MARKS: {
+    type: Number,
+    required: true,
+  },
+});
+const User=mongoose.model('Studentmarks',userSchema);
+module.exports=User;
+///////////////////////////////////////////////////////////////////////////////////////////////
+in backend iroutes in userRoutes.js
+
+const express = require("express");
+const router = express.Router();
+const User = require("../models/user");
+
+// Add a new student
+router.post("/addstudent", async (req, res) => {
+  try {
+    const newStudent = new User(req.body);
+    const savedStudent = await newStudent.save();
+    res.status(201).json(savedStudent);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Fetch all students
+router.get("/getallstudents", async (req, res) => {
+  try {
+    const students = await User.find();
+    res.json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Fetch students with DSBDA marks greater than 50
+router.get("/getstudentdsbds50", async (req, res) => {
+  try {
+    const students = await User.find({ DSBDA_MARKS: { $gt: 50 } });
+    res.json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Fetch students with marks greater than 90 in all subjects
+router.get("/getstudentdsgt90", async (req, res) => {
+  try {
+    const students = await User.find({
+      $and: [
+        { DSBDA_MARKS: { $gt: 90 } },
+        { CNS_MARKS: { $gt: 90 } },
+        { WAD_MARKS: { $gt: 90 } },
+        { CC_MARKS: { $gt: 90 } },
+        { AI_MARKS: { $gt: 90 } },
+      ],
+    });
+    res.json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Update marks of a student by 10 in all subjects
+router.put("/update/:studentName", async (req, res) => {
+  try {
+    const { studentName } = req.params;
+
+    const student = await User.findOne({ Name: studentName });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const updatedStudent = await User.findOneAndUpdate(
+      { Name: studentName },
+      {
+        $inc: {
+          CC_MARKS: 10,
+          DSBDA_MARKS: 10,
+          CNS_MARKS: 10,
+          WAD_MARKS: 10,
+          AI_MARKS: 10,
+        },
+      },
+      { new: true }
+    );
+
+    res.json(updatedStudent);
+  } catch (error) {
+    console.error("Error updating marks:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+// Delete a student by name
+router.delete("/deletestudent/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    const student = await User.findOne({ Name: name });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    await User.findOneAndDelete({ Name: name });
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting student:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+// Search a student by name
+router.get("/getstudent/:studentName", async (req, res) => {
+  try {
+    const { studentName } = req.params;
+    const student = await User.findOne({ Name: studentName });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    res.json(student);
+  } catch (error) {
+    console.error("Error fetching student:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+// Fetch students with DSBDA marks greater than 20
+router.get("/getstudentdsbds20", async (req, res) => {
+  try {
+    const students = await User.find({ DSBDA_MARKS: { $gt: 20 } });
+    res.json(students);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+// Update marks of a student by 20 in all subjects
+router.put("/updateby20/:studentName", async (req, res) => {
+  try {
+    const { studentName } = req.params;
+
+    const student = await User.findOne({ Name: studentName });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const updatedStudent = await User.findOneAndUpdate(
+      { Name: studentName },
+      {
+        $inc: {
+          CC_MARKS: 20,
+          DSBDA_MARKS: 20,
+          CNS_MARKS: 20,
+          WAD_MARKS: 20,
+          AI_MARKS: 20,
+        },
+      },
+      { new: true }
+    );
+
+    res.json(updatedStudent);
+  } catch (error) {
+    console.error("Error updating marks:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+module.exports = router;
+///////////////////////////////////////////////////////////////
+in backend in app.js  
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const userRoutes = require('./routes/userRoutes');
+
+const app = express();
+const PORT = 3000;
+const MONGODB_URI = 'mongodb+srv://ayushchopade45:5rPpZoWYhiySn3wE@cluster0.abjm1j4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+app.use(cors()); // Note the function call here
+app.use(bodyParser.json());
+app.use('/user', userRoutes);
+
+mongoose.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: 'Student'
+})
+.then(() => {
+    console.log("Connected to database");
+    app.listen(PORT, () => {
+        console.log(`Server on port ${PORT}`);
+    });
+})
+.catch(err => {
+    console.error(err.message);
+});

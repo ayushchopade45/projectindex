@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .container {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .card {
+        width: 270px;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+      .card h3 {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .text-center {
+        text-align: center;
+      }
+      #save_btn {
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      #save_btn:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h3>Registration Form</h3>
+        <form action="">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              placeholder="Enter name"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              placeholder="Enter email"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Enter Password"
+              required
+            />
+          </div>
+          <div class="text-center">
+            <button type="button" onclick="savedata()" id="save_btn">
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      function savedata() {
+        let name = document.getElementById("name").value;
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+
+        user_records = JSON.parse(localStorage.getItem("users")) || [];
+
+        if (
+          user_records.find((v) => {
+            return v.email == email;
+          })
+        ) {
+          alert("Duplicate email");
+        } else {
+          user_records.push({
+            name: name,
+            email: email,
+          });
+          localStorage.setItem("users", JSON.stringify(user_records));
+          alert("Sucessfull");
+          window.location.href = "profile.html";
+        }
+      }
+
+      // function login(){
+      //   let email=document.getElementById('email').value;
+      //   let password=document.getElementById('password').value;
+
+      //   let user_records=new Array();
+
+      //   user_records=JSON.parse(localStorage.getItem("users"))?JSON.parse(localStorage.getItem("users")):[]
+      //   if(user_records.find((v)=>{
+      //       return v.email==email && v.password==password
+      //   })){
+      //       alert("login sucessfull");
+      //       let current_user=user_records.filter((v)=>{
+      //           return v.email==email && v.password==password;
+      //       })[0]
+      //       localStorage.setItem("name",current_user.name);
+      //       localStorage.setItem("email",current_user.email);
+      //       window.location.href="profile.html";
+      //   }
+      //   else{
+      //       alert("login failed")
+      //   }
+
+      // }
+    </script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
+
+
+<!-- //////////////////////////////////////////////////////
+Profile page
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Records</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .table-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table th,
+      .table td {
+        padding: 8px;
+        text-align: left;
+        border: 1px solid #dee2e6;
+      }
+      .table th {
+        background-color: #f8f9fa;
+      }
+      .table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container table-container">
+      <h1>Profile Records</h1>
+
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody id="profileTableBody"></tbody>
+      </table>
+    </div>
+
+    <script>
+      // Retrieve user array from localStorage
+      var users = JSON.parse(localStorage.getItem("users")) || [];
+
+      // Get the table body element
+      var tableBody = document.getElementById("profileTableBody");
+
+      // Loop through each user and create a table row for each
+      users.forEach(function (user) {
+        var row = document.createElement("tr");
+        row.innerHTML =
+          "<td>" + user.name + "</td>" + "<td>" + user.email + "</td>";
+
+        tableBody.appendChild(row);
+      });
+    </script>
+
+    <script src="scripts.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html> -->
+
+

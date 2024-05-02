@@ -1,0 +1,9 @@
+Salesforce->ayushchopade45-yrsq@force.com
+            https://innovation-efficiency-2806.my.salesforce.com
+
+
+Mongo Db->mongodb+srv://ayushchopade45:5rPpZoWYhiySn3wE@cluster0.abjm1j4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+
+`vm image->https://drive.google.com/drive/u/0/folders/1me_nJJh0fvdDOXX3ew2jzGQpoP7f_iFt
+

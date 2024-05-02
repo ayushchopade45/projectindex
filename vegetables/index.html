@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-4 sidebar">
+          <h1>Some Favorites</h1>
+          <p>Celery Roots</p>
+          <p>Spaghetti Squash</p>
+          <p>Mushrooms</p>
+          <div class="col-md-6">
+            <form class="form-inline mt-3" onsubmit="searchImage(event)">
+              <div class="form-group">
+                <input
+                  type="text"
+                  class="form-control mr-2"
+                  placeholder="Search"
+                  id="searchInput"
+                />
+              </div>
+              <div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-7" id="imageResult">
+          <div class="alert alert-danger" role="alert">
+            This is a primary alert—check it out!
+          </div>
+          <h1>Wild and Wacky Vegetables</h1>
+          <blockquote class="blockquote">
+            <p>"Eating is necessary, but cooking is an Art"</p>
+          </blockquote>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Veggie</th>
+                <th>Disease</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Beetroot</td>
+                <td>Bettie</td>
+              </tr>
+              <tr>
+                <td>Potato</td>
+                <td>Potti</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Explore the whimsical world of wild and wacky vegetables, where
+            ordinary produce takes on extraordinary forms. Picture Dragon
+            Carrots, their twisted shapes and fiery hues evoking the tails of
+            mythical beasts, or Zebra Striped Eggplants, boasting patterns
+            reminiscent of the majestic zebras of the savannah. Venture further
+            and encounter Alien Broccoli, with its intricate fractal-like shapes
+            transporting you to otherworldly landscapes. Amidst this
+            kaleidoscope of colors and forms, Rainbow Swiss Chard stands out
+            with its stems flaunting a spectrum of vibrant hues, painting a
+            rainbow on your plate. Don't miss the Octopus Squash, its
+            tentacle-like protrusions lending an air of mystery and enchantment
+            to any dish. In this garden of delights, every vegetable is a
+            character, from the whimsical Fairy Tale Pumpkins to the jestful
+            Jester Radishes, inviting you to embark on a culinary adventure like
+            no other.
+          </p>
+          <div class="row">
+            <div class="col-md-6">
+              <img src="img.webp" class="img-thumbnail" alt="Image1" />
+              <div class="caption">
+                <p>Image2</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <img src="img1.jpg" class="img-thumbnail" alt="Image2" />
+              <div class="caption">
+                <p>Image2</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      function searchImage(event) {
+        event.preventDefault();
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const images = document.querySelectorAll('#imageResult .img-thumbnail');
+        images.forEach(image => {
+          const imageName = image.getAttribute('alt').toLowerCase();
+          
+          if (imageName.includes(searchValue)) {
+            image.parentElement.style.display = 'block';
+          } else {
+            image.parentElement.style.display = 'none';
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

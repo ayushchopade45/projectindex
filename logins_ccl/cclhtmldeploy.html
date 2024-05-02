@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <title>React</title>
+    <style>
+      /* styles.css */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa; /* light gray */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#info {
+  text-align: center;
+  background-color: #fff; /* white */
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* subtle shadow */
+  padding: 40px; /* increased padding */
+  max-width: 400px; /* added maximum width */
+}
+
+#info p {
+  margin: 10px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+/* Styling for name and roll number */
+#name {
+  font-size: 24px;
+  color: #007bff; /* blue */
+  font-weight: bold;
+}
+
+#roll {
+  font-size: 18px;
+  color: #28a745; /* green */
+  font-style: italic;
+}
+
+/* Styling for container */
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+/* Styling for the divider */
+.divider {
+  border-top: 2px solid #ccc; /* light gray */
+  margin: 20px auto; /* increased margin */
+  width: 80%; /* reduced width */
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="info">
+        <p id="name">Ayush Sunil Chopade</p>
+        <div class="divider"></div>
+        <p id="roll">Roll No: T190058551</p>
+        <p id="roll">This is a Deployed Site</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

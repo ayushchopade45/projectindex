@@ -1,0 +1,386 @@
+
+<!-- in frontend in index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+    
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+      }
+
+      h1 {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .delete-btn {
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Student List</h1>
+    <table id="studentTable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Song Name</th>
+                <th>Singer</th>
+                <th>Music Director</th>
+                <th>Film Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <button><a href="register.html">Add Songs</a></button>
+    <button id="fetchsongs">Fetch all songs</button>
+    
+    <form id="directorForm">
+        <label for="directorName">Director Name:</label>
+        <input type="text" id="directorName" name="directorName" required>
+        <button type="submit">Search by Director</button>
+    </form>
+
+    <form id="directorSingerForm">
+        <label for="directorSingerName">Director Name:</label>
+        <input type="text" id="directorSingerName" name="directorName" required>
+        <label for="singerName">Singer Name:</label>
+        <input type="text" id="singerName" name="singerName" required>
+        <button type="submit">Search by Director and Singer</button>
+    </form>
+
+    <form id="deleteSongForm">
+        <label for="songName">Song Name:</label>
+        <input type="text" id="songName" name="songName" required>
+        <button type="submit">Delete Song</button>
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const fetchButton = document.getElementById("fetchsongs");
+        const studentTable = document.getElementById("studentTable");
+        const directorForm = document.getElementById("directorForm");
+        const directorSingerForm = document.getElementById("directorSingerForm");
+        const deleteSongForm = document.getElementById("deleteSongForm");
+
+        fetchButton.addEventListener("click", () => {
+          fetchSongs("http://127.0.0.1:3000/user/getsongs");
+        });
+
+        directorForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const directorName = document.getElementById("directorName").value;
+          fetchSongs(`http://127.0.0.1:3000/user/getdirector/${directorName}`);
+        });
+
+        directorSingerForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const directorName = document.getElementById("directorSingerName").value;
+          const singerName = document.getElementById("singerName").value;
+          fetchSongs(`http://127.0.0.1:3000/user/getsongs/${directorName}/${singerName}`);
+        });
+
+        deleteSongForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const songName = document.getElementById("songName").value;
+          deleteSong(songName);
+        });
+
+        function fetchSongs(url) {
+          fetch(url)
+            .then((response) => response.json())
+            .then((data) => {
+              const tbody = studentTable.querySelector("tbody");
+              tbody.innerHTML = "";
+              data.forEach((song) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                  <td>${song.Songname}</td>
+                  <td>${song.Singer}</td>
+                  <td>${song.MusicDirector}</td>
+                  <td>${song.Filmname}</td>
+                  <td><button class="delete-btn" data-song="${song.Songname}">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+              });
+            })
+            .catch((error) =>
+              console.error("Error fetching song data:", error)
+            );
+        }
+
+        function deleteSong(songName) {
+          fetch(`http://127.0.0.1:3000/user/deletesong/${songName}`, {
+            method: "DELETE"
+          })
+          .then((response) => {
+            if (response.ok) {
+              alert("Song deleted successfully");
+              // Reload the page to reflect changes
+              location.reload();
+            } else {
+              throw new Error("Network response was not ok");
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting song:", error);
+            alert("Error deleting song. Please try again.");
+          });
+        }
+
+        // Event delegation for delete buttons
+        studentTable.addEventListener("click", (event) => {
+          if (event.target.classList.contains("delete-btn")) {
+            const songName = event.target.dataset.song;
+            deleteSong(songName);
+          }
+        });
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+in frontend register.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Song</title>
+</head>
+<body>
+    <h2>Add Song</h2>
+    <form id="songForm">
+        <label for="Songname">Song Name:</label>
+        <input type="text" id="Songname" name="Songname" required><br><br>
+        
+        <label for="Filmname">Film Name:</label>
+        <input type="text" id="Filmname" name="Filmname" required><br><br>
+        
+        <label for="MusicDirector">Music Director:</label>
+        <input type="text" id="MusicDirector" name="MusicDirector" required><br><br>
+        
+        <label for="Singer">Singer:</label>
+        <input type="text" id="Singer" name="Singer" required><br><br>
+        
+        <button type="submit">Submit</button>
+    </form>
+    
+    <script>
+        document.getElementById("songForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(this); // Get form data
+            const jsonData = {};
+            formData.forEach((value, key) => {
+                jsonData[key] = value;
+            });
+
+            fetch("http://localhost:3000/user/addsongs", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data); // Log response from server
+                // Handle response as needed (e.g., show success message)
+                alert("Song added successfully");
+                window.location.href="http://127.0.0.1:5500/Frontend/index.html" // Reload the page after successful submission
+            })
+            .catch(error => {
+                console.error("Error:", error); // Log any errors
+                // Handle errors as needed (e.g., show error message)
+                alert("Error adding song. Please try again.");
+            });
+        });
+
+
+        
+    </script>
+</body>
+</html>
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+backend -> models -> user.js 
+        -> userroutes -> routes.js 
+        -> server.js 
+
+user.js 
+
+const mongoose=require("mongoose");
+
+const song=new mongoose.Schema({
+
+    Songname:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    Filmname:{
+        type:String,
+        required:true
+    },
+    MusicDirector:{
+        type:String,
+        required:true
+    },
+    Singer:{
+        type:String,
+        required:true
+    }
+});
+const Song=mongoose.model("song_details",song);
+module.exports=Song;
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+routes.js 
+
+const express = require("express");
+const mongoose = require("mongoose");
+const Song = require("../models/user");
+const router = express.Router();
+
+router.post("/addsongs", async (req, res) => {
+  try {
+    const newsong = new Song(req.body);
+    const savedsong = await newsong.save();
+    res.status(201).json(savedsong);
+  } catch (error) {
+    console.error("Error adding song:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/getsongs", async (req, res) => {
+  try {
+    const songs = await Song.find();
+    res.json(songs);
+  } catch (error) {
+    console.error("Error fetching songs:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.get("/getdirector/:directorName", async (req, res) => {
+  try {
+    const {directorName} = req.params;
+    const songsByDirector = await Song.find({ MusicDirector: directorName });
+    res.json(songsByDirector);
+  } catch (error) {
+    console.error("Error fetching songs by director:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+router.get("/getsongs/:director/:singer", async (req, res) => {
+  try {
+    const director = req.params.director;
+    const singer = req.params.singer;
+    const songs = await Song.find({ MusicDirector: director, Singer: singer });
+    res.json(songs);
+  } catch (error) {
+    console.error("Error fetching songs by singer and director:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+router.delete("/deletesong/:songName", async (req, res) => {
+  try {
+    const { songName } = req.params;
+    const deletedSong = await Song.findOneAndDelete({ Songname: songName });
+    if (!deletedSong) {
+      return res.status(404).json({ message: "Song not found" });
+    }
+    res.json({ message: "Song deleted successfully", deletedSong });
+  } catch (error) {
+    console.error("Error deleting song:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+module.exports = router;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+server.js 
+
+const express=require('express');
+const mongoose=require("mongoose");
+const cors=require('cors');
+const bodyparser=require('body-parser')
+const userroutes=require("./userroutes/routes")
+const app=express();
+const PORT=3000;
+const MONGODB_URI='mongodb+srv://ayushchopade45:5rPpZoWYhiySn3wE@cluster0.abjm1j4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+
+app.use(cors());
+app.use(bodyparser.json());
+app.use("/user",userroutes);
+
+mongoose.connect(MONGODB_URI,{
+    useNewUrlParser:true,
+    useUnifiedTopology: true,
+    dbName: 'Music'
+})
+.then(()=>{
+    console.log("connected to database");
+    app.listen(PORT,()=>{
+        console.log(`server lsistening on ${PORT}`);
+    });
+
+})
+.catch(err=>{
+    console.log(err.message);
+});
+
+
+
+
+

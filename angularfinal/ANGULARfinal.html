@@ -1,0 +1,572 @@
+<!-- home component CSS -->
+/* External CSS styles here */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#Login {
+    text-align: center;
+}
+
+.btn {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+<!-- home component html  -->
+<div class="container">
+    <div id="Login">
+        <button class="btn" (click)="loginBtn()">Login</button>
+        <button class="btn" (click)="registerBtn()">Register</button>
+        <button class="btn" (click)="showUserBtn()">Show User</button>
+    </div>
+</div>
+
+<!-- home component .ts file -->
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.css'
+})
+export class HomeComponent {
+  constructor(private router:Router){
+
+  }
+  loginBtn(){
+    this.router.navigate(["/login"])
+  }
+  registerBtn(){
+    this.router.navigate(["/register"])
+  }
+  showUserBtn(){
+    this.router.navigate(["/profile"])
+  }
+}
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------ -->
+
+<!-- login component css -->
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .card {
+    width: 300px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+  
+  .card h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .send {
+    text-align: center;
+  }
+  
+  .send button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .send button[type="reset"] {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  .send button:hover {
+    background-color: #0056b3;
+  }
+  
+  .send button[type="reset"]:hover {
+    background-color: #0056b3;
+  }
+  
+  <!-- login component html -->
+  <div class="container">
+    <div class="card">
+      <h1>Login Form</h1>
+      <form #myLogin="ngForm" (ngSubmit)="LoginUser(myLogin.value)" class="form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            name="email"
+            type="email"
+            id="email"
+            [(ngModel)]="data.email"
+            placeholder="Enter email"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            name="password"
+            type="password"
+            id="password"
+            [(ngModel)]="data.password"
+            placeholder="Enter Password"
+            required
+          />
+        </div>
+        <div class="send">
+          <button type="submit">Login</button>
+          <button type="reset">Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+<!-- login component .ts file -->
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { GetUserDataService } from '../get-user-data.service';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
+})
+export class LoginComponent {
+  constructor(private router: Router, private service: GetUserDataService) {}
+  record: any[] = [];
+  data = {
+    email: '',
+    password: '',
+  };
+  LoginUser(Values: any) {
+    this.record = JSON.parse(localStorage.getItem('users') || '[]');
+    const loggedInUser = this.record.find(
+      (v) => {return v.email === this.data.email && v.password === this.data.password}
+    );
+    if (loggedInUser) {
+      alert('You are Logged-In Successfully !');
+      this.service.setUser([loggedInUser]);
+      this.router.navigate(['/profile']);
+    } else {
+      alert('Invalid Credentials, Login Failed !');
+    }
+  }
+}
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------ -->
+
+<!-- navbar component css -->
+.navbar {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 0;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.navbar-title {
+    font-size: 1.5rem;
+}
+
+.back-button {
+    background-color: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+<!-- navbar component html -->
+<nav class="navbar">
+    <div class="container">
+        <span class="navbar-title">Student Profile Management System</span>
+        <button class="back-button" (click)="GoToHome()">Back</button>
+    </div>
+</nav>
+
+<!-- navbar component .ts file -->
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-navbar',
+  standalone: true,
+  imports: [],
+  templateUrl: './navbar.component.html',
+  styleUrl: './navbar.component.css'
+})
+export class NavbarComponent {
+  constructor(private router:Router){
+
+  }
+  GoToHome(){
+    this.router.navigate(["/"])
+  }
+
+}
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------ -->
+
+<!-- profile component css -->
+/* External CSS styles here */
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .card {
+    width: 80%;
+    max-width: 800px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+  }
+  
+  .card h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  thead {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  thead th,
+  tbody td {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  tbody tr:hover {
+    background-color: #ddd;
+  }
+  
+<!-- profile component html -->
+<div class="container">
+    <div class="card">
+      <h1>Logged-In User Data</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Mobile Number</th>
+            <th>Email</th>
+            <th>Password</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of record">
+            <td>{{ item.name }}</td>
+            <td>{{ item.number }}</td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.password }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- profile component .ts file -->
+  import { Component } from '@angular/core';
+import { GetUserDataService } from '../get-user-data.service';
+import { CommonModule } from '@angular/common';
+
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.css'
+})
+export class ProfileComponent {
+  record:any[]=[];
+  constructor(private service:GetUserDataService){
+
+  }
+  ngOnInit():void{
+    this.record=this.service.getUser()
+  }
+
+}
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------ -->
+
+<!-- register component css  -->
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.send {
+    text-align: center;
+}
+
+.send button {
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.send button:hover {
+    background-color: #0056b3;
+}
+
+<!-- register component html  -->
+<div class="container">
+    <div class="card">
+      <h1>Registration Form</h1>
+      <form #myForm="ngForm" (ngSubmit)="RegisterUser(myForm.value)" class="form">
+        <div class="form-group">
+          <label for="fullname">Name</label>
+          <input
+            name="fullname"
+            type="text"
+            id="fullname"
+            [(ngModel)]="data.name"
+            placeholder="Enter Full Name"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="mobile">Mobile Number</label>
+          <input
+            name="mobile"
+            type="tel"
+            id="mobile"
+            [(ngModel)]="data.number"
+            placeholder="Enter Mobile Number"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            name="email"
+            type="email"
+            id="email"
+            [(ngModel)]="data.email"
+            placeholder="Enter email"
+            autocomplete="email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            name="password"
+            type="password"
+            id="password"
+            [(ngModel)]="data.password"
+            placeholder="Enter Password"
+            required
+          />
+        </div>
+        <div class="send">
+          <button type="submit">Register</button>
+          <button type="reset">Reset</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<!-- register component .ts file  -->
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.css',
+})
+export class RegisterComponent {
+  records: any[] = [];
+  data = {
+    name: '',
+    number: '',
+    email: '',
+    password: '',
+  };
+  RegisterUser(Values: any) {
+    if (
+      this.records.some((v) => {
+        return v.email == this.data.email;
+      })
+    ) {
+      alert('User is already Registered !');
+    } else {
+      this.records.push(this.data);
+      localStorage.setItem('users', JSON.stringify(this.records));
+      alert('Hi ' + this.data.name + ', You are successfully Registered !');
+    }
+  }
+}
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------ -->
+
+<!-- app component html  -->
+<app-navbar> </app-navbar>
+<router-outlet></router-outlet>
+
+<!-- app component .ts file  -->
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './navbar/navbar.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, NavbarComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
+})
+export class AppComponent {
+  title = '2C';
+}
+
+<!-- app component routes file -->
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './navbar/navbar.component';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet, NavbarComponent],
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.css',
+})
+export class AppComponent {
+  title = '2C';
+}
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------ -->
+
+<!-- getuserdata service .ts file  -->
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetUserDataService {
+  constructor() {}
+  private record: any[] = [];
+  getUser(): any[] {
+    return this.record;
+  }
+  setUser(data: any[]): void {
+    this.record = data;
+  }
+}
+
+<!-- ------------------------------------------------------------------------------------------------------------------------------------ -->
+
