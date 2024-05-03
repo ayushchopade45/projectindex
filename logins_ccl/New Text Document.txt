@@ -25,3 +25,4 @@ cat a.txt
 
 to find a name of another vm->  ls /home
 scp a.txt username(vagrant)@ipofanothermachine:/home/vagrant
+npm install -g @angular/cli@latest
