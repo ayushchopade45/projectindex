@@ -8,3 +8,20 @@ Mongo Db->mongodb+srv://ayushchopade45:5rPpZoWYhiySn3wE@cluster0.abjm1j4.mongodb
 `vm image->https://drive.google.com/drive/u/0/folders/1me_nJJh0fvdDOXX3ew2jzGQpoP7f_iFt
 
 https://github.com/SanketB12/Projectindex  sanket bhamre github
+
+
+cidr 172.168.2.0/24
+if not asked vagrant-username
+             vagrant-password
+ifconfig
+sudo apt install net-tools
+
+ls
+cat
+mkdir
+touch a.txt
+nano a.txt
+cat a.txt
+
+to find a name of another vm->  ls /home
+scp a.txt username(vagrant)@ipofanothermachine:/home/vagrant
